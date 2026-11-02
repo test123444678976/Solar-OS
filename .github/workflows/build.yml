@@ -1,0 +1,23 @@
+name: Build Solar OS ISO
+on:
+  push:
+  workflow_dispatch:   # permite correr manualmente no separador Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependências
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential flex bison bc libelf-dev libssl-dev \
+            wget xz-utils grub-pc-bin grub-efi-amd64-bin xorriso mtools
+      - name: Compilar kernel e gerar ISO
+        run: chmod +x *.sh && ./make-iso.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solar-os-iso
+          path: |
+            solar-os.iso
+            solar-os.bzImage
